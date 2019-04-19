@@ -245,15 +245,11 @@ namespace WindowsFormsApp1
                     //диск на котором программа
                     string prog = Path.GetPathRoot(Application.StartupPath);
                     //Путь к компилятору + имя файла
-
-
-                    //string commands2 = $@"C:\Windows\Microsoft.NET\Framework\v3.5\csc.exe /nologo {name}"; для cmd вар
                     string compiler = $@"C:\Windows\Microsoft.NET\Framework\v3.5\csc.exe";
                     //запуск компилятора
                     using (Process process = new Process())
                     {
                         process.StartInfo.FileName = $"{compiler}";
-                        //process.StartInfo.FileName = $@"cmd";//для cmd вар
                         process.StartInfo.WorkingDirectory = dir;
                         process.StartInfo.UseShellExecute = false;
                         process.StartInfo.RedirectStandardInput = true;
@@ -262,38 +258,12 @@ namespace WindowsFormsApp1
                         process.StartInfo.Arguments = $@"/out:{namex}.exe  /nologo {path}";
                         process.StartInfo.StandardOutputEncoding = Encoding.GetEncoding(866);
                         process.Start();
-                        ////передача комманд для cmd(дял старого варианта с cmd)
-                        //using (StreamWriter myStreamWriter = process.StandardInput)
-                        //{
-                        //    if (myStreamWriter.BaseStream.CanWrite)
-                        //    {
-                        //        myStreamWriter.WriteLine(commands2);
-                        //    }
-                        //};
-
-                        string outs="";//temp = Path.GetTempFileName();//output cmd,путь для файла хранителя output'a
-
+                        string outs;//output для csc.exe
                         outs = process.StandardOutput.ReadToEnd().ToString();//запись output
-                        //MessageBox.Show(outs);
-                        //File.WriteAllText(temp, outs);//создание временного файла для хранения output'a
-                        //string[] hran = File.ReadAllLines(temp);//массив для хранения строк из файла
-                        richTextBox1.Text = string.Empty;//очищение richtextbox'a
-                        //bool flag = false;//флаг для индикации ошибок,для последующего запуска/не запуска exe
-                        //for (int i = 0; i < hran.Length; i++)
-                        //{
-                        //    if (hran[i].StartsWith(name) == true)
-                        //    {
-                        //        richTextBox1.Text = richTextBox1.Text + hran[i].ToString() + Environment.NewLine;
-                        //        flag = true;
-                        //        //проверка всех строк на соответствие условию(имя файла с кодом)
-                        //        //если строка найдена то вместе с предыдущим содержимым textbox'a выводится
-                        //        //flag устанавливается в true(сигнал о том что есть ошибки) и тогда exe не запустится
-                        //    }
-                        //}
-                        //прежде чем запустить второй процесс по поиску и запуску exe,ожидание окончания первого 
-                        //File.Delete(temp);//удаление временного файла
+                        richTextBox1.Text = outs;//вывод output'a
+                        //ожидание окончания процесса
                         process.WaitForExit();
-                        if (outs == "")//если флаг false,значит ошибок не было и можно запускать
+                        if (outs == "")//если outs "",значит ошибок не было и можно запускать
                         {
                             Run();//метод для запуска exe
                         }
@@ -356,15 +326,16 @@ namespace WindowsFormsApp1
         }
         public void Compile()
         {
-            //проверка на существование активной страницы(если её нет то и сохранять нечего)
-            if (!(tabControl1.SelectedTab==null))
+            //проверка на существование активной страницы(если её нет то и данAных нет)
+            if (!(tabControl1.SelectedTab == null))
             {
                 TabPage selT = tabControl1.SelectedTab;//активная страница(selected) с её rtb,и собственными данными
                 RichTextBox selectedRtb = (RichTextBox)selT.Controls["rtb"];
                 if ((File.Exists(selT.Tag.ToString())) || (File.Exists(selectedRtb.Tag.ToString())))//Проверка на существование путей
                 {                                                                                   //из сохранения или открытия
                     string path;
-                    //путь файла из сохранения если нет то из открытия
+                    //путь файла
+                    //запись пути из сохранения если нет то из открытия
                     if (File.Exists(selT.Tag.ToString()))
                     {
                         path = selT.Tag.ToString();
@@ -387,44 +358,23 @@ namespace WindowsFormsApp1
                     //диск на котором программа
                     string prog = Path.GetPathRoot(Application.StartupPath);
                     //Путь к компилятору + имя файла
-                    string commands2 = $@"C:\Windows\Microsoft.NET\Framework\v3.5\csc.exe /nologo {name}";
-                    //запуск cmd
+                    string compiler = $@"C:\Windows\Microsoft.NET\Framework\v3.5\csc.exe";
+                    //запуск компилятора
                     using (Process process = new Process())
                     {
-                        process.StartInfo.FileName = "cmd.exe";
+                        process.StartInfo.FileName = $"{compiler}";
                         process.StartInfo.WorkingDirectory = dir;
                         process.StartInfo.UseShellExecute = false;
                         process.StartInfo.RedirectStandardInput = true;
                         process.StartInfo.RedirectStandardOutput = true;
                         process.StartInfo.CreateNoWindow = true;
+                        process.StartInfo.Arguments = $@"/out:{namex}.exe  /nologo {path}";
                         process.StartInfo.StandardOutputEncoding = Encoding.GetEncoding(866);
                         process.Start();
-                        using (StreamWriter myStreamWriter = process.StandardInput)
-                        {
-                            if (myStreamWriter.BaseStream.CanWrite)
-                            {
-                                myStreamWriter.WriteLine(commands2);
-                            }
-                        };
-                        string outs, temp = Path.GetTempFileName();//output cmd,путь для файла хранителя output'a
+                        string outs;//output для csc.exe
                         outs = process.StandardOutput.ReadToEnd().ToString();//запись output
-                        File.WriteAllText(temp, outs);//создание временного файла для хранения output'a
-                        string[] hran = File.ReadAllLines(temp);//массив для хранения строк из файла
-                        richTextBox1.Text = string.Empty;//очищение richtextbox'a
-                        bool flag = false;//флаг для индикации ошибок,для последующего запуска/не запуска exe
-                        for (int i = 0; i < hran.Length; i++)
-                        {
-                            if (hran[i].StartsWith(name) == true)
-                            {
-                                richTextBox1.Text = richTextBox1.Text + hran[i].ToString() + Environment.NewLine;
-                                flag = true;
-                                //проверка всех строк на соответствие условию(имя файла с кодом)
-                                //если строка найдена то вместе с предыдущим содержимым textbox'a выводится
-                                //flag устанавливается в true(сигнал о том что есть ошибки) и тогда exe не запустится
-                            }
-                        }
-                        //прежде чем запустить второй процесс по поиску и запуску exe,ожидание окончания первого 
-                        File.Delete(temp);//удаление временного файла
+                        richTextBox1.Text = outs;//вывод output'a
+                        //ожидание окончания процесса
                         process.WaitForExit();
                     }
                 }
@@ -432,7 +382,6 @@ namespace WindowsFormsApp1
                 {
                     SaveAs();
                 }
-
             }
         }
         private void openFileDialog1_FileOk(object sender, CancelEventArgs e)
@@ -743,5 +692,3 @@ namespace WindowsFormsApp1
 }
 //1)ввести где надо проверки try catch для пущей безопаности
 //3)подумать,посмотреть про подсветку синтаксиса,автодополнение(autocomplete)
-//10)найден способ напрямую запускать csc,может быть стоит заменить текущий способ запуска на этот
-//11)некоторые ошибки не выводяться потому,что они начинаются немного по другому чем имя файла и след-но они не выводятся
