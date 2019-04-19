@@ -29,6 +29,8 @@ namespace WindowsFormsApp1
             выполнитьToolStripMenuItem1.Enabled = false;
             скомпилироватьвыпToolStripMenuItem.Enabled = false;
             toolStripButton4.Enabled = false;
+            копироватьToolStripMenuItem.Enabled = false;
+            вставкаToolStripMenuItem.Enabled = false;
         }
 
         private void textBox2_TextChanged(object sender, EventArgs e)
@@ -69,6 +71,7 @@ namespace WindowsFormsApp1
             rtb.ContextMenuStrip = contextMenuStrip1;//меню для возможности закрытия док-та
             rtb.Modified = false;
             rtb.TextChanged += new EventHandler(rtb_TextChanged);//делегат для события textchanged
+            rtb.SelectionChanged += new EventHandler(rtb_SelectionChanged);//делегат для события SelectionChanged
             tp.Controls.Add(rtb);//доб-е richtextbox'a в страницу
             tabControl1.SelectedTab=tp;//новая страница сразу становится активной(выбранной)
             сохранитькакToolStripMenuItem2.Enabled = true;//сохранить как включается так как есть хотя бы страница
@@ -78,14 +81,15 @@ namespace WindowsFormsApp1
             выполнитьToolStripMenuItem1.Enabled = true;//отвечающих за
             скомпилироватьвыпToolStripMenuItem.Enabled = true;//компиляцию,запуск
             toolStripButton4.Enabled = true;///и тд
+            вставкаToolStripMenuItem.Enabled = true;//страница есть значит вставка разблокируется
         }
-        void rtb_TextChanged(object sender, EventArgs e)
+
+    void rtb_TextChanged(object sender, EventArgs e)
         {
             if (!(tabControl1.SelectedTab == null))
             {
                 TabPage selT = tabControl1.SelectedTab;
                 RichTextBox selectedRtb = (RichTextBox)selT.Controls["rtb"];
-
                 if (gLoad==true)
                 {
                     gLoad = false;//event вызван загрузкой текста из файла,поэтому ничего делать не надо
@@ -93,8 +97,8 @@ namespace WindowsFormsApp1
                     return;//просто выход из метода,предварительно инверсировав флаг(для возможности индикации будущих
                           //загрузок 
                 }
-                if (selectedRtb.Modified == true)
-                {
+                if (selectedRtb.Modified == true)//если modified true()
+                {                                //то кнопки сохранить разблок,если нет то блок кнопок  
                     сохранитьToolStripButton.Enabled = true;
                     сохранитьToolStripMenuItem2.Enabled = true;
                 }
@@ -121,6 +125,22 @@ namespace WindowsFormsApp1
                 }
             }
 
+        }
+        void rtb_SelectionChanged(object sender, EventArgs e)
+        {
+            if (!(tabControl1.SelectedTab == null))
+            {
+                TabPage selT = tabControl1.SelectedTab;
+                RichTextBox selectedRtb = (RichTextBox)selT.Controls["rtb"];
+                if (selectedRtb.SelectionLength>0)//если выделеляется больше 0 символов то кнопка копировать разблок
+                {
+                    копироватьToolStripMenuItem.Enabled = true;
+                }
+                else
+                {
+                    копироватьToolStripMenuItem.Enabled = false;
+                }
+            }
         }
         public void Save()
         {
@@ -673,6 +693,8 @@ namespace WindowsFormsApp1
                 {
                     восстдействияToolStripMenuItem1.Enabled = false;
                 }
+                вставкаToolStripMenuItem.Enabled = true;//есть страница значит можно разблокировать кнопку
+
             }
         }
 
@@ -687,6 +709,8 @@ namespace WindowsFormsApp1
             выполнитьToolStripMenuItem1.Enabled = false;//отвечающих за
             скомпилироватьвыпToolStripMenuItem.Enabled = false;//компиляцию,запуск
             toolStripButton4.Enabled = false;///и тд
+            копироватьToolStripMenuItem.Enabled = false;//блок кнопок копирования 
+            вставкаToolStripMenuItem.Enabled = false;//и вставки
         }
     }
 }
