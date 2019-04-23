@@ -71,10 +71,10 @@
             this.toolStripButton4 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.panel2 = new System.Windows.Forms.Panel();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.закрытьToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -151,7 +151,7 @@
             this.создатьToolStripMenuItem2.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.создатьToolStripMenuItem2.Name = "создатьToolStripMenuItem2";
             this.создатьToolStripMenuItem2.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
-            this.создатьToolStripMenuItem2.Size = new System.Drawing.Size(172, 22);
+            this.создатьToolStripMenuItem2.Size = new System.Drawing.Size(180, 22);
             this.создатьToolStripMenuItem2.Text = "&Создать";
             this.создатьToolStripMenuItem2.Click += new System.EventHandler(this.создатьToolStripMenuItem2_Click);
             // 
@@ -161,14 +161,14 @@
             this.открытьToolStripMenuItem2.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.открытьToolStripMenuItem2.Name = "открытьToolStripMenuItem2";
             this.открытьToolStripMenuItem2.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.открытьToolStripMenuItem2.Size = new System.Drawing.Size(172, 22);
+            this.открытьToolStripMenuItem2.Size = new System.Drawing.Size(180, 22);
             this.открытьToolStripMenuItem2.Text = "&Открыть";
             this.открытьToolStripMenuItem2.Click += new System.EventHandler(this.открытьToolStripMenuItem2_Click);
             // 
             // toolStripSeparator
             // 
             this.toolStripSeparator.Name = "toolStripSeparator";
-            this.toolStripSeparator.Size = new System.Drawing.Size(169, 6);
+            this.toolStripSeparator.Size = new System.Drawing.Size(177, 6);
             // 
             // сохранитьToolStripMenuItem2
             // 
@@ -176,38 +176,38 @@
             this.сохранитьToolStripMenuItem2.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.сохранитьToolStripMenuItem2.Name = "сохранитьToolStripMenuItem2";
             this.сохранитьToolStripMenuItem2.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.сохранитьToolStripMenuItem2.Size = new System.Drawing.Size(172, 22);
+            this.сохранитьToolStripMenuItem2.Size = new System.Drawing.Size(180, 22);
             this.сохранитьToolStripMenuItem2.Text = "&Сохранить";
             this.сохранитьToolStripMenuItem2.Click += new System.EventHandler(this.сохранитьToolStripMenuItem2_Click);
             // 
             // сохранитькакToolStripMenuItem2
             // 
             this.сохранитькакToolStripMenuItem2.Name = "сохранитькакToolStripMenuItem2";
-            this.сохранитькакToolStripMenuItem2.Size = new System.Drawing.Size(172, 22);
+            this.сохранитькакToolStripMenuItem2.Size = new System.Drawing.Size(180, 22);
             this.сохранитькакToolStripMenuItem2.Text = "Сохранить &как";
             this.сохранитькакToolStripMenuItem2.Click += new System.EventHandler(this.сохранитькакToolStripMenuItem2_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(169, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(177, 6);
             // 
             // закрытьToolStripMenuItem
             // 
             this.закрытьToolStripMenuItem.Name = "закрытьToolStripMenuItem";
-            this.закрытьToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.закрытьToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.закрытьToolStripMenuItem.Text = "Закрыть ";
             this.закрытьToolStripMenuItem.Click += new System.EventHandler(this.закрытьToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(169, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
             // 
             // выходToolStripMenuItem
             // 
             this.выходToolStripMenuItem.Name = "выходToolStripMenuItem";
-            this.выходToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.выходToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.выходToolStripMenuItem.Text = "Вы&ход";
             this.выходToolStripMenuItem.Click += new System.EventHandler(this.выходToolStripMenuItem_Click);
             // 
@@ -439,19 +439,6 @@
             this.panel1.Size = new System.Drawing.Size(809, 123);
             this.panel1.TabIndex = 10;
             // 
-            // richTextBox1
-            // 
-            this.richTextBox1.Cursor = System.Windows.Forms.Cursors.Default;
-            this.richTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.richTextBox1.Location = new System.Drawing.Point(0, 0);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.ReadOnly = true;
-            this.richTextBox1.ShortcutsEnabled = false;
-            this.richTextBox1.Size = new System.Drawing.Size(809, 123);
-            this.richTextBox1.TabIndex = 0;
-            this.richTextBox1.TabStop = false;
-            this.richTextBox1.Text = "";
-            // 
             // panel2
             // 
             this.panel2.Controls.Add(this.tabControl1);
@@ -475,6 +462,19 @@
             this.закрытьToolStripMenuItem1.Text = "Закрыть";
             this.закрытьToolStripMenuItem1.Click += new System.EventHandler(this.закрытьToolStripMenuItem1_Click);
             // 
+            // richTextBox1
+            // 
+            this.richTextBox1.Cursor = System.Windows.Forms.Cursors.Default;
+            this.richTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.richTextBox1.Location = new System.Drawing.Point(0, 0);
+            this.richTextBox1.Name = "richTextBox1";
+            this.richTextBox1.ReadOnly = true;
+            this.richTextBox1.ShortcutsEnabled = false;
+            this.richTextBox1.Size = new System.Drawing.Size(809, 123);
+            this.richTextBox1.TabIndex = 0;
+            this.richTextBox1.TabStop = false;
+            this.richTextBox1.Text = "";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -488,7 +488,7 @@
             this.Name = "Form1";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "C# Command line compiler shell";
+            this.Text = "Программа-эмулятор среды объектно-ориентированного программирования";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -518,7 +518,6 @@
         private System.Windows.Forms.ToolStripButton toolStripButton4;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Panel panel2;
-        private System.Windows.Forms.RichTextBox richTextBox1;
         private System.Windows.Forms.ToolStripMenuItem файлToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem создатьToolStripMenuItem2;
         private System.Windows.Forms.ToolStripMenuItem открытьToolStripMenuItem2;
@@ -548,6 +547,7 @@
         private System.Windows.Forms.ToolStripButton toolStripButton1;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem закрытьToolStripMenuItem1;
+        private System.Windows.Forms.RichTextBox richTextBox1;
     }
 }
 

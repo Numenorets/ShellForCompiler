@@ -5,13 +5,14 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using FastColoredTextBoxNS;
 
 
 namespace WindowsFormsApp1
 {
     public partial class Form1 : Form
-    {
-        public Form1()
+    {    
+    public Form1()
         {
             InitializeComponent();
         }
@@ -63,7 +64,14 @@ namespace WindowsFormsApp1
             tp.Text = "Unnamed " + tc.ToString();//название
             tp.Tag = "";//тег для хранения пути,"обнулён"
             tabControl1.TabPages.Add(tp);//добавление страницы
+
+
+
+
             RichTextBox rtb = new RichTextBox();//новый richtextbox
+            //FastColoredTextBox rtb = new FastColoredTextBox();
+
+
             rtb.Dock = DockStyle.Fill;//заполнение места
             rtb.Name = "rtb";
             rtb.Tag = "";//тег для хранения пути,"обнулён"
@@ -715,4 +723,9 @@ namespace WindowsFormsApp1
     }
 }
 //1)ввести где надо проверки try catch для пущей безопаности
-//3)подумать,посмотреть про подсветку синтаксиса,автодополнение(autocomplete)
+//2)подсветка синтаксиса,автодополнение решено(в теории) но осталось грамотно вставить компонент в своей проект
+//в нём нет свойства modify,правда есть некоторые новые event'ы как например paste from clipboard(вставить из буфера)
+//подумать как и чем заменить modify
+//3)вывод ошибок озаглавить,возможно заменить на страницы(page от 2 tabcontrol'a)
+//4)в fasttextbox'e есть уже куча функций,надо только грамотно ими воспользоваться,вывести по кнопкам,ненужное убрать
+//5)узнать как и какой версией c# пользуется ftb,может быть можно подключить версию поновее
