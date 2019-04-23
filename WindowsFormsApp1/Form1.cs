@@ -751,7 +751,6 @@ namespace WindowsFormsApp1
 
         private void TurnAside_Click(object sender, EventArgs e)
         {
-            tabControl2.TabPages.
         }
     }
 }
