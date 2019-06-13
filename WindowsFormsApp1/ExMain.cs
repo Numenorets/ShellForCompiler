@@ -1,88 +1,81 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.IO;
+using System.Data;
+using System.Drawing;
+using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using MetroFramework.Forms;
 using FastColoredTextBoxNS;
-
+using System.IO;
+using System.Text.RegularExpressions;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace WindowsFormsApp1
 {
-    public partial class Form1 : Form
+    public partial class ExMain:Form
     {
-        public Form1()
+        [DllImport("user32.dll")]//winapi 
+        static extern bool HideCaret(IntPtr hWnd);//для скрытия курсора
+        public ExMain()
         {
-            InitializeComponent();
+           InitializeComponent();
+           richTextBox1.Cursor = Cursors.Arrow; // изменение курсора для элемента на обычный
         }
+        
         bool gLoad = false;//глобальная переменная как флаг того что в rtb текст изменился только от загрузки туда инфе
-        private void Form1_Load(object sender, EventArgs e)
+        private void Form2_Load(object sender, EventArgs e)
         {
-            сохранитьToolStripButton.Enabled = false;
-            сохранитьToolStripMenuItem2.Enabled = false;
-            сохранитькакToolStripMenuItem2.Enabled = false;
-            отменадействияToolStripMenuItem.Enabled = false;
-            восстдействияToolStripMenuItem1.Enabled = false;
+            сохранитьToolStripMenuItem.Enabled = false;
+            сохранитьКакToolStripMenuItem.Enabled = false;
+            отменаДействияToolStripMenuItem.Enabled = false;
+            восстановитьToolStripMenuItem.Enabled = false;
             закрытьToolStripMenuItem.Enabled = false;
-            toolStripButton1.Enabled = false;
-            скомпилироватьToolStripMenuItem1.Enabled = false;
+            скомпилироватьToolStripMenuItem.Enabled = false;
             выполнитьToolStripMenuItem1.Enabled = false;
-            скомпилироватьвыпToolStripMenuItem.Enabled = false;
-            toolStripButton4.Enabled = false;
+            скомпилироватьИВыполнитьToolStripMenuItem.Enabled = false;
             копироватьToolStripMenuItem.Enabled = false;
             вставкаToolStripMenuItem.Enabled = false;
-            richTextBox1.BackColor = System.Drawing.Color.White;//изменение цвета для вывода компилятора
             выделитьВсёToolStripMenuItem.Enabled = false;
-            конввВВерхнийРегистToolStripMenuItem.Enabled = false;
-            конвВНижнийРегистToolStripMenuItem.Enabled = false;
-            вставитьУбратьКомментарииToolStripMenuItem.Enabled = false;
-            режимToolStripMenuItem.Enabled = false;
+            вВерхнийРегистрToolStripMenuItem.Enabled = false;
+            вНижнийРегистрToolStripMenuItem.Enabled = false;
+            вставитьубратьКомментарииToolStripMenuItem.Enabled = false;
+            режимВставкиИЗаменыToolStripMenuItem.Enabled = false;
             убратьТекущуюСтрокуToolStripMenuItem.Enabled = false;
-            найтиToolStripMenuItem1.Enabled = false;
-            заменаToolStripMenuItem.Enabled = false;
-            перейтиКToolStripMenuItem.Enabled = false;
+            найтиToolStripMenuItem.Enabled = false;
+            заменитьToolStripMenuItem.Enabled = false;
+            перейтиКСтрокеToolStripMenuItem.Enabled = false;
             приблизитьToolStripMenuItem.Enabled = false;
             отдалитьToolStripMenuItem.Enabled = false;
             вырезатьToolStripMenuItem.Enabled = false;
-        }
+            добавитьЗакладкуToolStripMenuItem.Enabled = false;
+            убратьЗакладкуToolStripMenuItem.Enabled = false;
+            перейтиКЗакладкеToolStripMenuItem.Enabled = false;
+            перейтиКЗакладкеToolStripMenuItem1.Enabled = false;
 
-        private void textBox2_TextChanged(object sender, EventArgs e)
-        {
+            toolStripSaveF.Enabled = false;
+            toolStripCloseF.Enabled = false;
+            toolStripFind.Enabled = false;
+            toolStripZoomPlus.Enabled = false;
+            toolStripZoomMinus.Enabled = false;
+            toolStripCompRum.Enabled = false;
 
-        }
-        public void button3_Click(object sender, EventArgs e)
-        {
-            OpenFile();
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        public void button2_Click(object sender, EventArgs e)
-        {
-            SaveAs();
-        }
-
-        public void button1_Click(object sender, EventArgs e)
-        {
-            CompileWithRun();
         }
         public void Page()
         {//Добавление страницы с richtexbox'ом,контекстным меню
             TabPage tp = new TabPage();//новая страница
-            int tc = (tabControl1.TabCount + 1);//счётчик для названия
+            int tc = (metroTabControl1.TabCount + 1);//счётчик для названия
             tp.Text = "Unnamed " + tc.ToString();//название
             tp.Tag = "";//тег для хранения пути,"обнулён"
-            tabControl1.TabPages.Add(tp);//добавление страницы
+            metroTabControl1.TabPages.Add(tp);//добавление страницы
             FastColoredTextBox rtb = new FastColoredTextBox();
             rtb.Dock = DockStyle.Fill;//заполнение места
             rtb.Name = "rtb";
             rtb.Tag = "";//тег для хранения пути,"обнулён"
             rtb.AcceptsTab = true;//tab
-            rtb.ContextMenuStrip = contextMenuStrip1;//меню для возможности закрытия док-та
+            rtb.ContextMenuStrip = metroContextMenu1;//меню для возможности закрытия док-та
             rtb.TextChanged += new EventHandler<TextChangedEventArgs>(rtb_TextChanged);//делегат для события textchanged
             rtb.SelectionChanged += new EventHandler(rtb_SelectionChanged);//делегат для события SelectionChanged
             rtb.UndoRedoStateChanged += new EventHandler<EventArgs>(rtb_UndoRedoStateChanged);//делегат для события UndoRedoStateChanged
@@ -90,35 +83,59 @@ namespace WindowsFormsApp1
             rtb.AllowMacroRecording = false;//макросы выключены
             rtb.WordWrap = true;//перенос строк
             rtb.CurrentLineColor = System.Drawing.Color.DeepSkyBlue;//подсветка текущей строки
+            rtb.MouseDoubleClick += Rtb_MouseDoubleClick;   
             tp.Controls.Add(rtb);//доб-е richtextbox'a в страницу
-            tabControl1.SelectedTab = tp;//новая страница сразу становится активной(выбранной)
-            сохранитькакToolStripMenuItem2.Enabled = true;//сохранить как включается так как есть хотя бы страница
+            metroTabControl1.SelectedTab = tp;//новая страница сразу становится активной(выбранной)
+            сохранитьКакToolStripMenuItem.Enabled = true;//сохранить как включается так как есть хотя бы страница
             закрытьToolStripMenuItem.Enabled = true;//закрыть включается так как есть что закрыть
-            toolStripButton1.Enabled = true;//закрыть включается так как есть что закрыть
-            скомпилироватьToolStripMenuItem1.Enabled = true;//включение кнопок
+            скомпилироватьToolStripMenuItem.Enabled = true;//включение кнопок
             выполнитьToolStripMenuItem1.Enabled = true;//отвечающих за
-            скомпилироватьвыпToolStripMenuItem.Enabled = true;//компиляцию,запуск
-            toolStripButton4.Enabled = true;///и тд
+            скомпилироватьИВыполнитьToolStripMenuItem.Enabled = true;//компиляцию,запуск
             вставкаToolStripMenuItem.Enabled = true;//страница есть значит вставка разблокируется
             выделитьВсёToolStripMenuItem.Enabled = true;
-            конввВВерхнийРегистToolStripMenuItem.Enabled = true;
-            конвВНижнийРегистToolStripMenuItem.Enabled = true;
-            вставитьУбратьКомментарииToolStripMenuItem.Enabled = true;
-            режимToolStripMenuItem.Enabled = true;
+            вВерхнийРегистрToolStripMenuItem.Enabled = true;
+            вНижнийРегистрToolStripMenuItem.Enabled = true;
+            вставитьубратьКомментарииToolStripMenuItem.Enabled = true;
+            режимВставкиИЗаменыToolStripMenuItem.Enabled = true;
             убратьТекущуюСтрокуToolStripMenuItem.Enabled = true;
-            найтиToolStripMenuItem1.Enabled = true;
-            заменаToolStripMenuItem.Enabled = true;
-            перейтиКToolStripMenuItem.Enabled = true;
+            найтиToolStripMenuItem.Enabled = true;
+            заменитьToolStripMenuItem.Enabled = true;
+            перейтиКСтрокеToolStripMenuItem.Enabled = true;
             приблизитьToolStripMenuItem.Enabled = true;
             отдалитьToolStripMenuItem.Enabled = true;
+            добавитьЗакладкуToolStripMenuItem.Enabled = true;
+            убратьЗакладкуToolStripMenuItem.Enabled = true;
+            перейтиКЗакладкеToolStripMenuItem.Enabled = true;
+            перейтиКЗакладкеToolStripMenuItem1.Enabled = true;
+            toolStripCloseF.Enabled = true;
+            toolStripFind.Enabled = true;
+            toolStripZoomPlus.Enabled = true;
+            toolStripZoomMinus.Enabled = true;
+            toolStripCompRum.Enabled = true;
+        }
 
+        private void Rtb_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if (!(metroTabControl1.SelectedTab == null))
+            {
+                TabPage selT = metroTabControl1.SelectedTab;
+                FastColoredTextBox selectedRtb = (FastColoredTextBox)selT.Controls["rtb"];
+                if (e.X < selectedRtb.LeftIndent)//если клик был по левой зоне компонента(до текста,в зоне строк)
+                {
+                    var place = selectedRtb.PointToPlace(e.Location);//запись места клика
+                    if (selectedRtb.Bookmarks.Contains(place.iLine))//если закладка есть убирает,нет - ставит
+                        selectedRtb.Bookmarks.Remove(place.iLine);
+                    else
+                        selectedRtb.Bookmarks.Add(place.iLine);
+                }
+            }
         }
 
         void rtb_TextChanged(object sender, EventArgs e)
         {
-            if (!(tabControl1.SelectedTab == null))
+            if (!(metroTabControl1.SelectedTab == null))
             {
-                TabPage selT = tabControl1.SelectedTab;
+                TabPage selT = metroTabControl1.SelectedTab;
                 FastColoredTextBox selectedRtb = (FastColoredTextBox)selT.Controls["rtb"];
                 if (gLoad == true)
                 {
@@ -128,23 +145,23 @@ namespace WindowsFormsApp1
                            //загрузок 
                 }
                 if (selectedRtb.IsChanged == true)//если modified true()
-                {                                //то кнопки сохранить разблок,если нет то блок кнопок  
-                    сохранитьToolStripButton.Enabled = true;
-                    сохранитьToolStripMenuItem2.Enabled = true;
+                {                                //то кнопки сохранить разблок,если нет то блок кнопок  ;
+                    сохранитьToolStripMenuItem.Enabled = true;
+                    toolStripSaveF.Enabled = true;
                 }
                 else
                 {
-                    сохранитьToolStripButton.Enabled = false;
                     сохранитьToolStripMenuItem.Enabled = false;
+                    toolStripSaveF.Enabled = false;
                 }
             }
 
         }
         void rtb_SelectionChanged(object sender, EventArgs e)
         {
-            if (!(tabControl1.SelectedTab == null))
+            if (!(metroTabControl1.SelectedTab == null))
             {
-                TabPage selT = tabControl1.SelectedTab;
+                TabPage selT = metroTabControl1.SelectedTab;
                 FastColoredTextBox selectedRtb = (FastColoredTextBox)selT.Controls["rtb"];
                 if (selectedRtb.SelectionLength > 0)//если выделеляется больше 0 символов то кнопка копировать разблок
                 {
@@ -160,25 +177,25 @@ namespace WindowsFormsApp1
         }
         void rtb_UndoRedoStateChanged(object sender, EventArgs e)
         {
-            if (!(tabControl1.SelectedTab == null))
+            if (!(metroTabControl1.SelectedTab == null))
             {
-                TabPage selT = tabControl1.SelectedTab;
+                TabPage selT = metroTabControl1.SelectedTab;
                 FastColoredTextBox selectedRtb = (FastColoredTextBox)selT.Controls["rtb"];
                 if (selectedRtb.UndoEnabled == true)//блок,разблок кнопки в зав-ти от готовности undo(отмена)
                 {
-                    отменадействияToolStripMenuItem.Enabled = true;
+                    отменаДействияToolStripMenuItem.Enabled = true;
                 }
                 else
                 {
-                    отменадействияToolStripMenuItem.Enabled = false;
+                    отменаДействияToolStripMenuItem.Enabled = false;
                 }
                 if (selectedRtb.RedoEnabled == true)//блок,разблок кнопки в зав-ти от готовности redo(восстановление)
                 {
-                    восстдействияToolStripMenuItem1.Enabled = true;
+                    восстановитьToolStripMenuItem.Enabled = true;
                 }
                 else
                 {
-                    восстдействияToolStripMenuItem1.Enabled = false;
+                    восстановитьToolStripMenuItem.Enabled = false;
                 }
 
             }
@@ -186,11 +203,11 @@ namespace WindowsFormsApp1
         public void Save()
         {
             //проверка на существование активной страницы(если её нет то нет страниц вообще и сохранять нечего)
-            if (!(tabControl1.SelectedTab == null))
+            if (!(metroTabControl1.SelectedTab == null))
             {
                 //selt.tag хранит в себе путь сохранения файла
                 //selectedRtb хранит в себе путь открытия файла
-                TabPage selT = tabControl1.SelectedTab;
+                TabPage selT = metroTabControl1.SelectedTab;
                 FastColoredTextBox selectedRtb = (FastColoredTextBox)selT.Controls["rtb"];
                 if (File.Exists(selT.Tag.ToString()))
                 {
@@ -207,8 +224,8 @@ namespace WindowsFormsApp1
                         SaveAs();//если по предыдущим путям ничего не найдено то предлагается сохранить;
                     }
                 }
-                сохранитьToolStripButton.Enabled = false;//выключение кнопок сохранения
-                сохранитьToolStripMenuItem2.Enabled = false;//
+                toolStripSaveF.Enabled = false;//выключение кнопок сохранения
+                сохранитьToolStripMenuItem.Enabled = false;//
                 selectedRtb.IsChanged = false;//флаг того,что текст модифицирован убран
             }
 
@@ -216,9 +233,9 @@ namespace WindowsFormsApp1
         public void SaveAs()
         {
             //проверка на существование активной страницы(если её нет то нет страниц вообще и сохранять нечего)
-            if (!(tabControl1.SelectedTab == null))
+            if (!(metroTabControl1.SelectedTab == null))
             {
-                TabPage selT = tabControl1.SelectedTab;
+                TabPage selT = metroTabControl1.SelectedTab;
                 FastColoredTextBox selectedRtb = (FastColoredTextBox)selT.Controls["rtb"];
                 //показ имени файла без полного пути
                 saveFileDialog1.FileName = Path.GetFileNameWithoutExtension(saveFileDialog1.FileName);
@@ -234,8 +251,8 @@ namespace WindowsFormsApp1
                     selT.Tag = saveFileDialog1.FileName.ToString();
                     File.WriteAllText(selT.Tag.ToString(), selectedRtb.Text, Encoding.UTF8);
                     selT.Text = Path.GetFileName(saveFileDialog1.FileName);//имя вкладки=название файла
-                    сохранитьToolStripButton.Enabled = false;//выключение кнопок сохранения
-                    сохранитьToolStripMenuItem2.Enabled = false;//
+                    toolStripSaveF.Enabled = false;//выключение кнопок сохранения
+                    сохранитьToolStripMenuItem.Enabled = false;//
                     selectedRtb.IsChanged = false;//флаг того,что текст модифицирован убран
                 }
             }
@@ -253,21 +270,21 @@ namespace WindowsFormsApp1
                 //последующая чтение file'a и запись в richtexbox
                 //сравнение пути открываемого файла и записей путей из сохранения и открытия разных tab'ob и их rtb
                 //если совпадают то просто переключает на нужную страницу,нет то создаёт новую
-                foreach (TabPage page in tabControl1.TabPages)
+                foreach (TabPage page in metroTabControl1.TabPages)
                 {
                     if (page.Tag.ToString() == openFileDialog1.FileName)
                     {
-                        tabControl1.SelectTab(page);
+                        metroTabControl1.SelectTab(page);
                         return;
                     }
                     if (page.Controls["rtb"].Tag.ToString() == openFileDialog1.FileName)
                     {
-                        tabControl1.SelectTab(page);
+                        metroTabControl1.SelectTab(page);
                         return;
                     }
                 }
                 Page();//создание страницы
-                TabPage selT = tabControl1.SelectedTab;
+                TabPage selT = metroTabControl1.SelectedTab;
                 FastColoredTextBox selectedRtb = (FastColoredTextBox)selT.Controls["rtb"]; ;
                 selectedRtb.Tag = openFileDialog1.FileName.ToString();
                 gLoad = true;//флаг показывающий что изменения в тексте вызваны загрузкой текста
@@ -278,9 +295,9 @@ namespace WindowsFormsApp1
         public void CompileWithRun()
         {
             //проверка на существование активной страницы(если её нет то и данAных нет)
-            if (!(tabControl1.SelectedTab == null))
+            if (!(metroTabControl1.SelectedTab == null))
             {
-                TabPage selT = tabControl1.SelectedTab;//активная страница(selected) с её rtb,и собственными данными
+                TabPage selT = metroTabControl1.SelectedTab;//активная страница(selected) с её rtb,и собственными данными
                 FastColoredTextBox selectedRtb = (FastColoredTextBox)selT.Controls["rtb"];
                 if ((File.Exists(selT.Tag.ToString())) || (File.Exists(selectedRtb.Tag.ToString())))//Проверка на существование путей
                 {                                                                                   //из сохранения или открытия
@@ -309,7 +326,7 @@ namespace WindowsFormsApp1
                     //диск на котором программа
                     string prog = Path.GetPathRoot(Application.StartupPath);
                     //Путь к компилятору + имя файла
-                    string compiler = $@"C:\Windows\Microsoft.NET\Framework\v3.5\csc.exe";
+                    string compiler = $@"{sys2}:\Windows\Microsoft.NET\Framework\v3.5\csc.exe";
                     //запуск компилятора
                     using (Process process = new Process())
                     {
@@ -341,9 +358,9 @@ namespace WindowsFormsApp1
         }
         public void Run()
         {//проверка на существование активной страницы(если её нет то и данных нет)
-            if (!(tabControl1.SelectedTab == null))
+            if (!(metroTabControl1.SelectedTab == null))
             {
-                TabPage selT = tabControl1.SelectedTab;//активная страница(selected) с её rtb,и собственными данными
+                TabPage selT = metroTabControl1.SelectedTab;//активная страница(selected) с её rtb,и собственными данными
                 FastColoredTextBox selectedRtb = (FastColoredTextBox)selT.Controls["rtb"];
                 //selt.tag хранит в себе путь сохранения файла
                 //selectedRtb хранит в себе путь открытия файла
@@ -391,9 +408,9 @@ namespace WindowsFormsApp1
         public void Compile()
         {
             //проверка на существование активной страницы(если её нет то и данAных нет)
-            if (!(tabControl1.SelectedTab == null))
+            if (!(metroTabControl1.SelectedTab == null))
             {
-                TabPage selT = tabControl1.SelectedTab;//активная страница(selected) с её rtb,и собственными данными
+                TabPage selT = metroTabControl1.SelectedTab;//активная страница(selected) с её rtb,и собственными данными
                 FastColoredTextBox selectedRtb = (FastColoredTextBox)selT.Controls["rtb"];
                 if ((File.Exists(selT.Tag.ToString())) || (File.Exists(selectedRtb.Tag.ToString())))//Проверка на существование путей
                 {                                                                                   //из сохранения или открытия
@@ -422,7 +439,7 @@ namespace WindowsFormsApp1
                     //диск на котором программа
                     string prog = Path.GetPathRoot(Application.StartupPath);
                     //Путь к компилятору + имя файла
-                    string compiler = $@"C:\Windows\Microsoft.NET\Framework\v3.5\csc.exe";
+                    string compiler = $@"{sys2}:\Windows\Microsoft.NET\Framework\v3.5\csc.exe";
                     //запуск компилятора
                     using (Process process = new Process())
                     {
@@ -448,234 +465,33 @@ namespace WindowsFormsApp1
                 }
             }
         }
-        private void openFileDialog1_FileOk(object sender, CancelEventArgs e)
+        private void ВыделитьToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
         }
 
-        private void saveFileDialog1_FileOk(object sender, CancelEventArgs e)
-        {
-
-        }
-
-        private void button4_Click(object sender, EventArgs e)
-        {
-            //вызов метода по добавлению страницы
-            Page();
-        }
-
-        private void tabPage1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void toolStripComboBox1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void оПрограммеToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void button5_Click(object sender, EventArgs e)
-        {
-            Save();
-        }
-
-        private void создатьToolStripMenuItem_Click(object sender, EventArgs e)
+        private void СоздатьToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Page();
         }
 
-        private void сохранитьToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ОткрытьToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Save();
+            OpenFile();
         }
 
-        private void сохранитьКакToolStripMenuItem_Click(object sender, EventArgs e)
+        private void СохранитьКакToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SaveAs();
         }
 
-        private void открытьToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            OpenFile();
-        }
-
-        private void скомпилироватьToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            CompileWithRun();
-        }
-
-        private void statusStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
-        {
-
-        }
-
-        private void toolStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
-        {
-
-        }
-
-        private void toolStripButton1_Click(object sender, EventArgs e)
-        {
-            OpenFile();
-        }
-
-        private void toolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void открытьToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            OpenFile();
-        }
-
-        private void сохранитьToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            Save();
-        }
-
-        private void сохранитьКакToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            SaveAs();
-        }
-
-        private void toolStripButton2_Click(object sender, EventArgs e)
-        {
-            Save();
-        }
-
-        private void toolStripButton3_Click(object sender, EventArgs e)
-        {
-            SaveAs();
-        }
-
-        private void toolStripButton4_Click(object sender, EventArgs e)
-        {
-            CompileWithRun();
-        }
-
-        private void toolStripButton5_Click(object sender, EventArgs e)
-        {
-            Page();
-        }
-
-        private void создатьToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            Page();
-        }
-
-        private void выполнитьToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void создатьToolStripButton_Click(object sender, EventArgs e)
-        {
-            Page();
-        }
-
-        private void открытьToolStripButton_Click(object sender, EventArgs e)
-        {
-            OpenFile();
-        }
-
-        private void сохранитьToolStripButton_Click(object sender, EventArgs e)
-        {
-            Save();
-        }
-        private void выходToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
-
-        private void создатьToolStripMenuItem2_Click(object sender, EventArgs e)
-        {
-            Page();
-        }
-
-        private void открытьToolStripMenuItem2_Click(object sender, EventArgs e)
-        {
-            OpenFile();
-        }
-
-        private void сохранитьToolStripMenuItem2_Click(object sender, EventArgs e)
-        {
-            Save();
-        }
-
-        private void сохранитькакToolStripMenuItem2_Click(object sender, EventArgs e)
-        {
-            SaveAs();
-        }
-
-        private void отменадействияToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            //проверка на существование активной страницы(если её нет то и данных нет)
-            if (!(tabControl1.SelectedTab == null))
-            {
-                //ctrl+z отмена
-                TabPage selT = tabControl1.SelectedTab;//активная страница(selected) с её rtb,и собственными данными
-                FastColoredTextBox selectedRtb = (FastColoredTextBox)selT.Controls["rtb"];
-                selectedRtb.Undo();
-            }
-        }
-        private void отменадействияToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            //проверка на существование активной страницы(если её нет то и данных нет)
-            if (!(tabControl1.SelectedTab == null))
-            {
-                //ctrl+y вперёд
-                TabPage selT = tabControl1.SelectedTab;//активная страница(selected) с её rtb,и собственными данными
-                FastColoredTextBox selectedRtb = (FastColoredTextBox)selT.Controls["rtb"];
-                selectedRtb.Redo();
-            }
-        }
-
-        private void копироватьToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            //проверка на существование активной страницы(если её нет то и данных нет)
-            if (!(tabControl1.SelectedTab == null))
-            {
-                //скопировать
-                TabPage selT = tabControl1.SelectedTab;//активная страница(selected) с её rtb,и собственными данными
-                FastColoredTextBox selectedRtb = (FastColoredTextBox)selT.Controls["rtb"];
-                selectedRtb.Copy();
-            }
-        }
-
-        private void вставкаToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            //проверка на существование активной страницы(если её нет то и данных нет)
-            if (!(tabControl1.SelectedTab == null))
-            {
-                //вставить 
-                TabPage selT = tabControl1.SelectedTab;//активная страница(selected) с её rtb,и собственными данными
-                FastColoredTextBox selectedRtb = (FastColoredTextBox)selT.Controls["rtb"];
-                selectedRtb.Paste();
-            }
-        }
-        private void скомпилироватьToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            Compile();
-        }
-
-        private void выполнитьToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            Run();
-        }
-
-        private void закрытьToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ЗакрытьToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //проверка на существование активной страницы(если её нет то и удалять нечего)
-            if (!(tabControl1.SelectedTab == null))
+            if (!(metroTabControl1.SelectedTab == null))
             {
                 //при переключении страницы на главную то если есть изменения кнопка не блокируется
-                TabPage selT = tabControl1.SelectedTab;//активная страница(selected) с её rtb,и собственными данными
+                TabPage selT = metroTabControl1.SelectedTab;//активная страница(selected) с её rtb,и собственными данными
                 FastColoredTextBox selectedRtb = (FastColoredTextBox)selT.Controls["rtb"];
                 if (selectedRtb.IsChanged == true)//есть ли изменения которые можно сохранить
                 {
@@ -708,143 +524,166 @@ namespace WindowsFormsApp1
                         return;//user отменил решение
                     }
                 }
-                tabControl1.Controls.Remove(selT);//удаление текущей страницы
+                metroTabControl1.Controls.Remove(selT);//удаление текущей страницы
             }
         }
-        private void toolStripButton1_Click_1(object sender, EventArgs e)
+
+        private void ОтменаДействияToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            закрытьToolStripMenuItem_Click(sender, e);
+            //проверка на существование активной страницы(если её нет то и данных нет)
+            if (!(metroTabControl1.SelectedTab == null))
+            {
+                //ctrl+z отмена
+                TabPage selT = metroTabControl1.SelectedTab;//активная страница(selected) с её rtb,и собственными данными
+                FastColoredTextBox selectedRtb = (FastColoredTextBox)selT.Controls["rtb"];
+                selectedRtb.Undo();
+            }
         }
 
-        private void закрытьToolStripMenuItem1_Click(object sender, EventArgs e)
+
+        private void ВосстановитьToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            закрытьToolStripMenuItem_Click(sender, e);
+            //проверка на существование активной страницы(если её нет то и данных нет)
+            if (!(metroTabControl1.SelectedTab == null))
+            {
+                //ctrl+y вперёд
+                TabPage selT = metroTabControl1.SelectedTab;//активная страница(selected) с её rtb,и собственными данными
+                FastColoredTextBox selectedRtb = (FastColoredTextBox)selT.Controls["rtb"];
+                selectedRtb.Redo();
+            }
         }
 
-        private void опрограммеToolStripMenuItem1_Click(object sender, EventArgs e)
+        private void КопироватьToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            //проверка на существование активной страницы(если её нет то и данных нет)
+            if (!(metroTabControl1.SelectedTab == null))
+            {
+                //скопировать
+                TabPage selT = metroTabControl1.SelectedTab;//активная страница(selected) с её rtb,и собственными данными
+                FastColoredTextBox selectedRtb = (FastColoredTextBox)selT.Controls["rtb"];
+                selectedRtb.Copy();
+            }
         }
 
-        private void RichTextBox1_TextChanged(object sender, EventArgs e)
+        private void ВставкаToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            //проверка на существование активной страницы(если её нет то и данных нет)
+            if (!(metroTabControl1.SelectedTab == null))
+            {
+                //вставить 
+                TabPage selT = metroTabControl1.SelectedTab;//активная страница(selected) с её rtb,и собственными данными
+                FastColoredTextBox selectedRtb = (FastColoredTextBox)selT.Controls["rtb"];
+                selectedRtb.Paste();
+            }
         }
 
-        private void TabControl1_Selected(object sender, TabControlEventArgs e)
+        private void MetroTabControl1_Selected(object sender, TabControlEventArgs e)
         {
-
-            if (!(tabControl1.SelectedTab == null))
+            if (!(metroTabControl1.SelectedTab == null))
             {
                 //при переключении страницы (значит она есть)
-                TabPage selT = tabControl1.SelectedTab;//активная страница(selected) с её rtb,и собственными данными
+                TabPage selT = metroTabControl1.SelectedTab;//активная страница(selected) с её rtb,и собственными данными
                 FastColoredTextBox selectedRtb = (FastColoredTextBox)selT.Controls["rtb"];
-                сохранитькакToolStripMenuItem2.Enabled = true;//включение сохранить как(ведь страница есть)
+                сохранитьКакToolStripMenuItem.Enabled = true;//включение сохранить как(ведь страница есть)
                 закрытьToolStripMenuItem.Enabled = true;//страница есть,а значит её можно закрыть
-                toolStripButton1.Enabled = true;//страница есть,а значит её можно закрыть
-                скомпилироватьToolStripMenuItem1.Enabled = true;//отключение кнопок
+                скомпилироватьToolStripMenuItem.Enabled = true;//отключение кнопок
                 выполнитьToolStripMenuItem1.Enabled = true;//отвечающих за
-                скомпилироватьвыпToolStripMenuItem.Enabled = true;//компиляцию,запуск
-                toolStripButton4.Enabled = true;///и тд
+                скомпилироватьИВыполнитьToolStripMenuItem.Enabled = true;//компиляцию,запуск///и тд
                 выделитьВсёToolStripMenuItem.Enabled = true;
-                конввВВерхнийРегистToolStripMenuItem.Enabled = true;
-                конвВНижнийРегистToolStripMenuItem.Enabled = true;
-                вставитьУбратьКомментарииToolStripMenuItem.Enabled = true;
-                режимToolStripMenuItem.Enabled = true;
+                вВерхнийРегистрToolStripMenuItem.Enabled = true;
+                вНижнийРегистрToolStripMenuItem.Enabled = true;
+                вставитьубратьКомментарииToolStripMenuItem.Enabled = true;
+                режимВставкиИЗаменыToolStripMenuItem.Enabled = true;
                 убратьТекущуюСтрокуToolStripMenuItem.Enabled = true;
-                найтиToolStripMenuItem1.Enabled = true;
-                заменаToolStripMenuItem.Enabled = true;
-                перейтиКToolStripMenuItem.Enabled = true;
+                найтиToolStripMenuItem.Enabled = true;
+                заменитьToolStripMenuItem.Enabled = true;
+                перейтиКСтрокеToolStripMenuItem.Enabled = true;
                 приблизитьToolStripMenuItem.Enabled = true;
                 отдалитьToolStripMenuItem.Enabled = true;
+                добавитьЗакладкуToolStripMenuItem.Enabled = true;
+                убратьЗакладкуToolStripMenuItem.Enabled = true;
+                перейтиКЗакладкеToolStripMenuItem.Enabled = true;
+                перейтиКЗакладкеToolStripMenuItem1.Enabled = true;
+                toolStripCloseF.Enabled = true;
+                toolStripFind.Enabled = true;
+                toolStripZoomPlus.Enabled = true;
+                toolStripZoomMinus.Enabled = true;
+                toolStripCompRum.Enabled = true;
                 if (selectedRtb.IsChanged == true)
                 {
-                    сохранитьToolStripButton.Enabled = true;
-                    сохранитьToolStripMenuItem2.Enabled = true;
+                    toolStripSaveF.Enabled = true;
+                    сохранитьToolStripMenuItem.Enabled = true;
                 }
                 else
                 {
-                    сохранитьToolStripButton.Enabled = false;
-                    сохранитьToolStripMenuItem2.Enabled = false;
+                    toolStripSaveF.Enabled = false;
+                    сохранитьToolStripMenuItem.Enabled = false;
                 }
                 if (selectedRtb.UndoEnabled == true)//блок,разблок кнопки в зав-ти от готовности undo(отмена)
                 {
-                    отменадействияToolStripMenuItem.Enabled = true;
+                    отменаДействияToolStripMenuItem.Enabled = true;
                 }
                 else
                 {
-                    отменадействияToolStripMenuItem.Enabled = false;
+                    отменаДействияToolStripMenuItem.Enabled = false;
                 }
                 if (selectedRtb.RedoEnabled == true)//блок,разблок кнопки в зав-ти от готовности redo(восстановление)
                 {
-                    восстдействияToolStripMenuItem1.Enabled = true;
+                    восстановитьToolStripMenuItem.Enabled = true;
                 }
                 else
                 {
-                    восстдействияToolStripMenuItem1.Enabled = false;
+                    восстановитьToolStripMenuItem.Enabled = false;
                 }
                 вставкаToolStripMenuItem.Enabled = true;//есть страница значит можно разблокировать кнопку
             }
         }
 
-        private void TabControl1_ControlRemoved(object sender, ControlEventArgs e)
+        private void MetroTabControl1_ControlRemoved(object sender, ControlEventArgs e)
         {
-            сохранитькакToolStripMenuItem2.Enabled = false;//при удалении страницы,выключается кнопка
-            отменадействияToolStripMenuItem.Enabled = false;//выкл undo,redo
-            восстдействияToolStripMenuItem1.Enabled = false;//
+            сохранитьКакToolStripMenuItem.Enabled = false;//при удалении страницы,выключается кнопка
+            отменаДействияToolStripMenuItem.Enabled = false;//выкл undo,redo
+            восстановитьToolStripMenuItem.Enabled = false;//
             закрытьToolStripMenuItem.Enabled = false;//страницы нет,значит её закрыть нельзя
-            toolStripButton1.Enabled = false;//страницы нет,значит её закрыть нельзя
-            скомпилироватьToolStripMenuItem1.Enabled = false;//отключение кнопок
+            скомпилироватьToolStripMenuItem.Enabled = false;//отключение кнопок
             выполнитьToolStripMenuItem1.Enabled = false;//отвечающих за
-            скомпилироватьвыпToolStripMenuItem.Enabled = false;//компиляцию,запуск
-            toolStripButton4.Enabled = false;///и тд
+            скомпилироватьИВыполнитьToolStripMenuItem.Enabled = false;//компиляцию,запуск///и тд
             копироватьToolStripMenuItem.Enabled = false;//блок кнопок копирования 
             вставкаToolStripMenuItem.Enabled = false;//и вставки
             вырезатьToolStripMenuItem.Enabled = false;/////
-
             выделитьВсёToolStripMenuItem.Enabled = false;
-            конввВВерхнийРегистToolStripMenuItem.Enabled = false;
-            конвВНижнийРегистToolStripMenuItem.Enabled = false;
-            вставитьУбратьКомментарииToolStripMenuItem.Enabled = false;
-            режимToolStripMenuItem.Enabled = false;
+            вВерхнийРегистрToolStripMenuItem.Enabled = false;
+            вНижнийРегистрToolStripMenuItem.Enabled = false;
+            вставитьубратьКомментарииToolStripMenuItem.Enabled = false;
+            режимВставкиИЗаменыToolStripMenuItem.Enabled = false;
             убратьТекущуюСтрокуToolStripMenuItem.Enabled = false;
-            найтиToolStripMenuItem1.Enabled = false;
-            заменаToolStripMenuItem.Enabled = false;
-            перейтиКToolStripMenuItem.Enabled = false;
+            найтиToolStripMenuItem.Enabled = false;
+            заменитьToolStripMenuItem.Enabled = false;
+            перейтиКСтрокеToolStripMenuItem.Enabled = false;
             приблизитьToolStripMenuItem.Enabled = false;
             отдалитьToolStripMenuItem.Enabled = false;
-
+            добавитьЗакладкуToolStripMenuItem.Enabled = false;
+            убратьЗакладкуToolStripMenuItem.Enabled = false;
+            перейтиКЗакладкеToolStripMenuItem.Enabled = false;
+            перейтиКЗакладкеToolStripMenuItem1.Enabled = false;
+            toolStripSaveF.Enabled = false;
+            toolStripCloseF.Enabled = false;
+            toolStripFind.Enabled = false;
+            toolStripZoomPlus.Enabled = false;
+            toolStripZoomMinus.Enabled = false;
+            toolStripCompRum.Enabled = false;
         }
 
-        private void TurnAside_Click(object sender, EventArgs e)
-        {
-        }
-
-        private void Compiler_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void Panel2_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private void Panel3_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        private void Form2_FormClosing(object sender, FormClosingEventArgs e)
         {
             //проверка на существование активной страницы(если её нет то и удалять нечего)
-            if (!(tabControl1.SelectedTab == null))
+            if (!(metroTabControl1.SelectedTab == null))
             {
                 //при переключении страницы на главную то если есть изменения кнопка не блокируется
-                TabPage selT = tabControl1.SelectedTab;//активная страница(selected) с её rtb,и собственными данными
+                TabPage selT = metroTabControl1.SelectedTab;//активная страница(selected) с её rtb,и собственными данными
                 FastColoredTextBox selectedRtb = (FastColoredTextBox)selT.Controls["rtb"];
                 if (selectedRtb.IsChanged == true)//есть ли изменения которые можно сохранить
                 {
-
                     DialogResult dialogResult = MessageBox.Show($"Сохранить изменения в {selT.Text}", "", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Information);
                     if (dialogResult == DialogResult.Yes)
                     {
@@ -872,40 +711,41 @@ namespace WindowsFormsApp1
                     {
                         e.Cancel = true;//отмена закрытия формы
                     }
+
                 }
             }
         }
 
-        private void НайтиToolStripMenuItem1_Click(object sender, EventArgs e)
+        private void НайтиToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //проверка на существование активной страницы(если её нет то и удалять нечего)
-            if (!(tabControl1.SelectedTab == null))
+            if (!(metroTabControl1.SelectedTab == null))
             {
                 //при переключении страницы на главную то если есть изменения кнопка не блокируется
-                TabPage selT = tabControl1.SelectedTab;//активная страница(selected) с её rtb,и собственными данными
+                TabPage selT = metroTabControl1.SelectedTab;//активная страница(selected) с её rtb,и собственными данными
                 FastColoredTextBox selectedRtb = (FastColoredTextBox)selT.Controls["rtb"];
                 selectedRtb.ShowFindDialog();//вызов диалога поиска
             }
         }
 
-        private void ЗаменаToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ЗаменитьToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //проверка на существование активной страницы(если её нет то и удалять нечего)
-            if (!(tabControl1.SelectedTab == null))
+            if (!(metroTabControl1.SelectedTab == null))
             {
                 //при переключении страницы на главную то если есть изменения кнопка не блокируется
-                TabPage selT = tabControl1.SelectedTab;//активная страница(selected) с её rtb,и собственными данными
+                TabPage selT = metroTabControl1.SelectedTab;//активная страница(selected) с её rtb,и собственными данными
                 FastColoredTextBox selectedRtb = (FastColoredTextBox)selT.Controls["rtb"];
                 selectedRtb.ShowReplaceDialog();//вызов диалога поиска + замены
             }
         }
 
-        private void ПерейтиКToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ПерейтиКСтрокеToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (!(tabControl1.SelectedTab == null))
+            if (!(metroTabControl1.SelectedTab == null))
             {
                 //при переключении страницы на главную то если есть изменения кнопка не блокируется
-                TabPage selT = tabControl1.SelectedTab;//активная страница(selected) с её rtb,и собственными данными
+                TabPage selT = metroTabControl1.SelectedTab;//активная страница(selected) с её rtb,и собственными данными
                 FastColoredTextBox selectedRtb = (FastColoredTextBox)selT.Controls["rtb"];
                 selectedRtb.ShowGoToDialog();//вызов диалога перейти к
             }
@@ -913,82 +753,76 @@ namespace WindowsFormsApp1
 
         private void ВыделитьВсёToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (!(tabControl1.SelectedTab == null))
+            if (!(metroTabControl1.SelectedTab == null))
             {
                 //при переключении страницы на главную то если есть изменения кнопка не блокируется
-                TabPage selT = tabControl1.SelectedTab;//активная страница(selected) с её rtb,и собственными данными
+                TabPage selT = metroTabControl1.SelectedTab;//активная страница(selected) с её rtb,и собственными данными
                 FastColoredTextBox selectedRtb = (FastColoredTextBox)selT.Controls["rtb"];
                 selectedRtb.SelectAll();//вызов диалога выделить всё
             }
         }
 
-        private void MenuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
-        {
-
-        }
-
         private void ПриблизитьToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (!(tabControl1.SelectedTab == null))
+            if (!(metroTabControl1.SelectedTab == null))
             {
                 //при переключении страницы на главную то если есть изменения кнопка не блокируется
-                TabPage selT = tabControl1.SelectedTab;//активная страница(selected) с её rtb,и собственными данными
+                TabPage selT = metroTabControl1.SelectedTab;//активная страница(selected) с её rtb,и собственными данными
                 FastColoredTextBox selectedRtb = (FastColoredTextBox)selT.Controls["rtb"];
-                selectedRtb.Zoom = selectedRtb.Zoom+10;
+                selectedRtb.Zoom = selectedRtb.Zoom + 10;
             }
         }
 
         private void ОтдалитьToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (!(tabControl1.SelectedTab == null))
+            if (!(metroTabControl1.SelectedTab == null))
             {
                 //при переключении страницы на главную то если есть изменения кнопка не блокируется
-                TabPage selT = tabControl1.SelectedTab;//активная страница(selected) с её rtb,и собственными данными
+                TabPage selT = metroTabControl1.SelectedTab;//активная страница(selected) с её rtb,и собственными данными
                 FastColoredTextBox selectedRtb = (FastColoredTextBox)selT.Controls["rtb"];
-                selectedRtb.Zoom = selectedRtb.Zoom -10;
+                selectedRtb.Zoom = selectedRtb.Zoom - 10;
             }
         }
 
-        private void КонвВНижнийРегистToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ВВерхнийРегистрToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (!(tabControl1.SelectedTab == null))
+            if (!(metroTabControl1.SelectedTab == null))
             {
                 //при переключении страницы на главную то если есть изменения кнопка не блокируется
-                TabPage selT = tabControl1.SelectedTab;//активная страница(selected) с её rtb,и собственными данными
-                FastColoredTextBox selectedRtb = (FastColoredTextBox)selT.Controls["rtb"];
-                selectedRtb.LowerCase();
-            }
-
-        }
-
-        private void КонввВВерхнийРегистToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (!(tabControl1.SelectedTab == null))
-            {
-                //при переключении страницы на главную то если есть изменения кнопка не блокируется
-                TabPage selT = tabControl1.SelectedTab;//активная страница(selected) с её rtb,и собственными данными
+                TabPage selT = metroTabControl1.SelectedTab;//активная страница(selected) с её rtb,и собственными данными
                 FastColoredTextBox selectedRtb = (FastColoredTextBox)selT.Controls["rtb"];
                 selectedRtb.UpperCase();
             }
         }
 
-        private void ВставитьУбратьКомментарииToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ВНижнийРегистрToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (!(tabControl1.SelectedTab == null))
+            if (!(metroTabControl1.SelectedTab == null))
             {
                 //при переключении страницы на главную то если есть изменения кнопка не блокируется
-                TabPage selT = tabControl1.SelectedTab;//активная страница(selected) с её rtb,и собственными данными
+                TabPage selT = metroTabControl1.SelectedTab;//активная страница(selected) с её rtb,и собственными данными
+                FastColoredTextBox selectedRtb = (FastColoredTextBox)selT.Controls["rtb"];
+                selectedRtb.LowerCase();
+            }
+        }
+
+        private void ВставитьубратьКомментарииToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!(metroTabControl1.SelectedTab == null))
+            {
+                //при переключении страницы на главную то если есть изменения кнопка не блокируется
+                TabPage selT = metroTabControl1.SelectedTab;//активная страница(selected) с её rtb,и собственными данными
                 FastColoredTextBox selectedRtb = (FastColoredTextBox)selT.Controls["rtb"];
                 selectedRtb.CommentSelected();
             }
         }
 
-        private void РежимToolStripMenuItem_Click(object sender, EventArgs e)
+        private void РежимВставкиИЗаменыToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (!(tabControl1.SelectedTab == null))
+            if (!(metroTabControl1.SelectedTab == null))
             {
                 //при переключении страницы на главную то если есть изменения кнопка не блокируется
-                TabPage selT = tabControl1.SelectedTab;//активная страница(selected) с её rtb,и собственными данными
+                TabPage selT = metroTabControl1.SelectedTab;//активная страница(selected) с её rtb,и собственными данными
                 FastColoredTextBox selectedRtb = (FastColoredTextBox)selT.Controls["rtb"];
                 SendKeys.Send("{Insert}");
             }
@@ -996,49 +830,155 @@ namespace WindowsFormsApp1
 
         private void УбратьТекущуюСтрокуToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (!(tabControl1.SelectedTab == null))
+            if (!(metroTabControl1.SelectedTab == null))
             {
                 //при переключении страницы на главную то если есть изменения кнопка не блокируется
-                TabPage selT = tabControl1.SelectedTab;//активная страница(selected) с её rtb,и собственными данными
+                TabPage selT = metroTabControl1.SelectedTab;//активная страница(selected) с её rtb,и собственными данными
                 FastColoredTextBox selectedRtb = (FastColoredTextBox)selT.Controls["rtb"];
                 selectedRtb.ClearCurrentLine();
             }
         }
 
-        private void УстановитьЗакладкуToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (!(tabControl1.SelectedTab == null))
-            {
-                //при переключении страницы на главную то если есть изменения кнопка не блокируется
-                TabPage selT = tabControl1.SelectedTab;//активная страница(selected) с её rtb,и собственными данными
-                FastColoredTextBox selectedRtb = (FastColoredTextBox)selT.Controls["rtb"];
-                    
-            }
-
-        }
-
         private void ВырезатьToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (!(tabControl1.SelectedTab == null))
+            if (!(metroTabControl1.SelectedTab == null))
             {
                 //при переключении страницы на главную то если есть изменения кнопка не блокируется
-                TabPage selT = tabControl1.SelectedTab;//активная страница(selected) с её rtb,и собственными данными
+                TabPage selT = metroTabControl1.SelectedTab;//активная страница(selected) с её rtb,и собственными данными
                 FastColoredTextBox selectedRtb = (FastColoredTextBox)selT.Controls["rtb"];
                 selectedRtb.Cut();
                 вырезатьToolStripMenuItem.Enabled = false;
             }
         }
+
+        private void СкомпилироватьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Compile();
+        }
+
+        private void ВыполнитьToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            Run();
+        }
+
+        private void СкомпилироватьИВыполнитьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CompileWithRun();
+        }
+
+        private void СохранитьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Save();
+        }
+
+        private void ВыходToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void MetroContextMenu1_Opening(object sender, CancelEventArgs e)
+        {
+
+        }
+
+        private void ЗакрытьToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            ЗакрытьToolStripMenuItem_Click(sender,e);
+        }
+
+        private void RichTextBox1_MouseDown(object sender, MouseEventArgs e)
+        {
+            HideCaret(richTextBox1.Handle);//скрытие курсора
+        }
+
+        private void ДобавитьЗакладкуToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!(metroTabControl1.SelectedTab == null))
+            {
+                //при переключении страницы на главную то если есть изменения кнопка не блокируется
+                TabPage selT = metroTabControl1.SelectedTab;//активная страница(selected) с её rtb,и собственными данными
+                FastColoredTextBox selectedRtb = (FastColoredTextBox)selT.Controls["rtb"];
+                //selectedRtb.UnbookmarkLine(Place.Empty.iLine);
+                selectedRtb.BookmarkLine(selectedRtb.Selection.Start.iLine);
+            }
+        }
+
+        private void УбратьЗакладкуToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!(metroTabControl1.SelectedTab == null))
+            {
+                //при переключении страницы на главную то если есть изменения кнопка не блокируется
+                TabPage selT = metroTabControl1.SelectedTab;//активная страница(selected) с её rtb,и собственными данными
+                FastColoredTextBox selectedRtb = (FastColoredTextBox)selT.Controls["rtb"];
+                //selectedRtb.UnbookmarkLine(Place.Empty.iLine);
+                selectedRtb.UnbookmarkLine(selectedRtb.Selection.Start.iLine);
+            }
+        }
+
+        private void ПерейтиКЗакладкеToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //при переключении страницы на главную то если есть изменения кнопка не блокируется
+            TabPage selT = metroTabControl1.SelectedTab;//активная страница(selected) с её rtb,и собственными данными
+            FastColoredTextBox selectedRtb = (FastColoredTextBox)selT.Controls["rtb"];
+            selectedRtb.GotoNextBookmark(selectedRtb.Selection.Start.iLine);
+            
+        }
+
+        private void ПерейтиКЗакладкеToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            //при переключении страницы на главную то если есть изменения кнопка не блокируется
+            TabPage selT = metroTabControl1.SelectedTab;//активная страница(selected) с её rtb,и собственными данными
+            FastColoredTextBox selectedRtb = (FastColoredTextBox)selT.Controls["rtb"];
+            selectedRtb.GotoPrevBookmark(selectedRtb.Selection.Start.iLine);
+        }
+
+        private void ToolStripCreateF_Click(object sender, EventArgs e)
+        {
+            создатьToolStripMenuItem.PerformClick();
+        }
+
+        private void ToolStripOpenF_Click(object sender, EventArgs e)
+        {
+            открытьToolStripMenuItem.PerformClick();
+        }
+
+        private void ToolStripSaveF_Click(object sender, EventArgs e)
+        {
+            сохранитьToolStripMenuItem.PerformClick();
+        }
+
+        private void ToolStripCloseF_Click(object sender, EventArgs e)
+        {
+            закрытьToolStripMenuItem.PerformClick();
+        }
+
+        private void ToolStripFind_Click(object sender, EventArgs e)
+        {
+            найтиToolStripMenuItem.PerformClick();
+        }
+
+        private void ToolStripZoomPlus_Click(object sender, EventArgs e)
+        {
+            приблизитьToolStripMenuItem.PerformClick();
+        }
+
+        private void ToolStripZoomMinus_Click(object sender, EventArgs e)
+        {
+            отдалитьToolStripMenuItem.PerformClick();
+        }
+
+        private void ToolStripCompRum_Click(object sender, EventArgs e)
+        {
+            скомпилироватьИВыполнитьToolStripMenuItem.PerformClick();
+        }
+
+        private void ОПрограммеToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+            AboutProgramm About = new AboutProgramm();
+            About.ShowDialog();
+        }
     }
 }
 //1)ввести где надо проверки try catch для пущей безопаности
-//2)подсветка синтаксиса,автодополнение решено(в теории) но осталось грамотно вставить компонент в своей проект
-//в нём нет свойства modify,правда есть некоторые новые event'ы как например paste from clipboard(вставить из буфера)
-//подумать как и чем заменить modify
-//4)в fasttextbox'e есть уже куча функций,надо только грамотно ими воспользоваться,вывести по кнопкам,ненужное убрать
-//5)узнать как и какой версией c# пользуется ftb,может быть можно подключить версию поновее
-//6)скин поставить скорее всего matherial design
-//7)решить проблему,возможно отключить закладки
-//8)возможно сделать выбор компиляторов(по версиям)
-//9)возможно стоит всё таки на вывод поставить richtextbox но с надписью какой-ить вверху типо компилятор
-//10)классы
-//11)закладки убрать и их клавиши обнулить
+//возможность растягивать форму в право и лево,поработать над этим а то не оч растягивается
